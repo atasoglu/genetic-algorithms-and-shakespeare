@@ -1,7 +1,8 @@
 """
 Genetic Algorithms and Shakespeare 
 author: Ahmet Atasoglu
-url: 
+github: https://github.com/atasoglu98/genetic-algorithms-and-shakespeare
+medium: https://medium.com/@ahmetatasoglu98/shakespeare-maymunlar-ve-genetik-algoritmalar-a18a09167a30
 """
 from time import time
 
@@ -14,7 +15,7 @@ phrase = "To be or not to be."
 
 monkeys = Monkeys(population_size, mutation_rate, phrase)
 
-print("1-Best_Genes\t2-Average_of_Fitness", "\n","="*50)
+print("1-Best_Genes\t\t2-Average_of_Fitness", "\n","=" * 50)
 
 count = 0
 start = time()
@@ -23,9 +24,9 @@ while count < max_generation:
     monkeys.generate()
     monkeys.calc_fitness()
     monkeys.evaluate()
-    print(monkeys.best_phrase,"\t",monkeys.get_average())
+    print(monkeys.get_best_phrase(),"\t", "{0:.4f}".format(monkeys.get_average()))
     count +=1
-    if monkeys.is_finished:
+    if monkeys.is_finished():
         end = time()
         print("\nTerminated", "//",
             "Generation:", str(monkeys.generation), "//",

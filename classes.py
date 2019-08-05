@@ -1,7 +1,8 @@
 """
 Genetik Algoritmalar ve Shakespeare 
 Ahmet Ataşoğlu
-url: 
+github: https://github.com/atasoglu98/genetic-algorithms-and-shakespeare
+medium: https://medium.com/@ahmetatasoglu98/shakespeare-maymunlar-ve-genetik-algoritmalar-a18a09167a30
 """
 from math import floor
 from random import random, randint
@@ -16,21 +17,21 @@ def new_char():
     return chr(c)           
 
 class Chromosome:
-    def __init__(self, _target):
+    def __init__(self, targt):
         self.genes = []
         self.fitness = 0
-        self.target = _target 
+        self.target = targt 
         for i in range(len(self.target)):
             self.genes.append(new_char())
     
     def fit_func(self): # uygunluk fonksiyonu
         score = 0
-        for gene, _target in zip(self.genes, self.target):
-            if gene == _target:
+        for gene, targt in zip(self.genes, self.target):
+            if gene == targt:
                 score += 1 
         self.fitness = score / len(self.target) 
     
-    def crossover(self, partner):
+    def crossover(self, partner): # caprazlama
         child = Chromosome(self.target)
         mid_point = randint(0, len(self.genes)-1)
         for i in range(len(self.genes)):
@@ -38,7 +39,7 @@ class Chromosome:
             else: child.genes[i] = partner.genes[i]
         return child
         
-    def mutate(self, mutation_rate):
+    def mutate(self, mutation_rate): # mutasyon
         for i in range(len(self.genes)):
             if random() < mutation_rate:
                 self.genes[i] = new_char()
@@ -51,9 +52,9 @@ class Monkeys:
         self.mutation_rate = m_rate
         self.generation = 0
         self.best_score_global = 1
-        self.best_score_local = 0 
+        self.best_score_local = {"fit": 0, "index": 0}
         self.best_phrase = ""
-        self.is_finished = False
+        self.finished = False
         self.mating_pool = []
 
         self.monkeys = []
@@ -62,23 +63,26 @@ class Monkeys:
 
         self.calc_fitness()
 
-    def calc_fitness(self):
-        _max = 0
+    def calc_fitness(self): # uygunluk degerlerini hesapla
+        max_fitness = 0
+        index = 0
         for monkey in self.monkeys:
             monkey.fit_func()
-            if monkey.fitness > _max:
-                _max = monkey.fitness
-        self.best_score_local = _max
+            if monkey.fitness > max_fitness:
+                max_fitness = monkey.fitness
+                index = self.monkeys.index(monkey)
+        self.best_score_local["fit"] = max_fitness
+        self.best_score_local["index"] = index
 
-    def natural_selection(self):
+    def natural_selection(self): # dogal secilim
         self.mating_pool = []
         for monkey in self.monkeys:
-            fitness = map(monkey.fitness, 0, self.best_score_local, 0, 1)
+            fitness = map(monkey.fitness, 0, self.best_score_local["fit"], 0, 1)
             n = floor(fitness * 100)
             for i in range(n):
                 self.mating_pool.append(monkey)
 
-    def generate(self):
+    def generate(self): # yeni bireylerin olusturulmasi
         m_pool_size = len(self.mating_pool) - 1
         for x in range(len(self.monkeys)):
             i = randint(0, m_pool_size)
@@ -90,24 +94,29 @@ class Monkeys:
             self.monkeys[x] = child
         self.generation += 1
 
-    def evaluate(self):
-        local_best = 0
-        index = 0
-        for i in range(len(self.monkeys)):
-            if self.monkeys[i].fitness > local_best:
-                index = i
-                local_best = self.monkeys[i].fitness
-
-        self.best_phrase = self.monkeys[index].get_phrase()
-        if local_best == self.best_score_global:
-            self.is_finished = True
+    def evaluate(self): # degerlendirme
+        best_index = self.best_score_local["index"]
+        self.best_phrase = self.monkeys[best_index].get_phrase()
+        if self.best_score_local["fit"] == self.best_score_global:
+            self.finished = True
     
-    def get_average(self):
+
+    def is_finished(self): # bitti mi?
+    	return self.finished
+
+    # Yardimci Fonksiyonlar #
+
+    def get_average(self):    
         count = 0
         for member in self.monkeys:
             count += member.fitness
         return count / len(self.monkeys)
 
+    def get_best_phrase(self):
+    	return self.best_phrase
+
+    def get_generation(self):
+    	return str(self.generation)
 
 
 
