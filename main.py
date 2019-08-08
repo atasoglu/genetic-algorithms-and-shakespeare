@@ -29,7 +29,7 @@ while count < max_generation:
     if monkeys.is_finished():
         end = time()
         print("\nTerminated", "//",
-            "Generation:", str(monkeys.generation), "//",
+            "Generation:", monkeys.get_generation(), "//",
             "Time elapsed:", "{0:.2f}".format(end-start), "seconds")
         break
     
