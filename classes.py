@@ -108,8 +108,8 @@ class Monkeys:
 
     def get_average(self):    
         count = 0
-        for member in self.monkeys:
-            count += member.fitness
+        for monkey in self.monkeys:
+            count += monkey.fitness
         return count / len(self.monkeys)
 
     def get_best_phrase(self):
